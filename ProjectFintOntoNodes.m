@@ -54,15 +54,15 @@ end
 %A=MassMatrix2D1dof(MUA);
 %sol=A\b;
 
-if ~isfield(MUA,'M') || isempty(MUA.M)
+if ~isfield(MUA,'M')
     MUA.M=MassMatrix2D1dof(MUA);
 end
 
-if isa(MUA.dM,"decomposition") && ~isempty(MUA.dM)
-    sol=MUA.dM\b;
-else
+% if isa(MUA.dM,"decomposition")
+% %     sol=MUA.dM\b;
+% else
     sol=MUA.M\b;
-end
+% end
 
 for I=1:nVarargs
     varargout{I}=sol(:,I);

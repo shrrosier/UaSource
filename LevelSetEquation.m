@@ -49,10 +49,14 @@ if CtrlVar.LevelSetMethodSolveOnAStrip
     CtrlVar.LineUpGLs=false ; Threshold=0 ;
 
     [xc,yc]=CalcMuaFieldsContourLine(CtrlVar,MUA,F0.LSF,Threshold);
+
+
+    % DistEle=pdist2([xc(:) yc(:)],[MUA.xEle MUA.yEle],'euclidean','Smallest',1) ;
+    % DistEle=DistEle(:) ;  % note, this is a element-valued distance function
     F0.x=MUA.coordinates(:,1); F0.y=MUA.coordinates(:,2);
     DistNod=pdist2([xc(:) yc(:)],[F0.x F0.y],'euclidean','Smallest',1) ;
-    DistNod=DistNod(:) ;  
-    DistEle=Nodes2EleMean(MUA.connectivity,DistNod) ; % note, this is now an element-valued distance function
+    DistNod=DistNod(:) ;  % note, this is a element-valued distance function
+    DistEle=Nodes2EleMean(MUA.connectivity,DistNod) ;
 
     if isnan(CtrlVar.LevelSetMethodStripWidth)
 
@@ -102,6 +106,8 @@ if CtrlVar.LevelSetMethodSolveOnAStrip
     F1.GF.node=F1.GF.node(kk) ;      F0.GF.node=F0.GF.node(kk) ;
 
 
+
+
     % To do, set all other values to empty to make sure they are not updated
 
     if ~isempty(F0.c)
@@ -124,10 +130,10 @@ end
 %% TestIng: Calculating  various potential calving-law related quantities ahead of a call to the level-set equation sovler
 if CtrlVar.LevelSetMethodTest 
 
-    [F0.exx,F0.eyy,F0.exy]=CalcNodalStrainRates(MUA,F0.ub,F0.vb);
-    [F1.exx,F1.eyy,F1.exy]=CalcNodalStrainRates(MUA,F1.ub,F1.vb);
+    [F0.exx,F0.eyy,F0.exy]=CalcNodalStrainRates(CtrlVar,MUA,F0.ub,F0.vb);
+    [F1.exx,F1.eyy,F1.exy]=CalcNodalStrainRates(CtrlVar,MUA,F1.ub,F1.vb);
 
-    PSR=CalcPrincipalValuesOfSymmetricalTwoByTwoMatrices(F0.exx,F0.exy,F0.eyy); % Principal Strain Rates
+    PSR=CalcPrincipalValuesOfSymmerticalTwoByTwoMatrices(F0.exx,F0.exy,F0.eyy); % Principal Strain Rates
     I1=PSR(:,1)<0 ;  PSR(I1,1)=0;
     I2=PSR(:,2)<0 ;  PSR(I2,2)=0;
 
@@ -136,23 +142,22 @@ if CtrlVar.LevelSetMethodTest
 
 
     PSR(F0.LSFMask.NodesOut,:)=NaN;
-    FindOrCreateFigure("P1") ; PlotMeshScalarVariable(CtrlVar,MUA,PSR(:,1)) ;
-    CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=0;
-    hold on ; PlotMuaMesh(CtrlVar,MUA,[],'w') ;
-    hold on ; PlotCalvingFronts(CtrlVar,MUA,F0,'r');
-
-    FindOrCreateFigure("P2") ; PlotMeshScalarVariable(CtrlVar,MUA,PSR(:,2)) ;
-    hold on ; PlotCalvingFronts(CtrlVar,MUA,F0,'r');
-
-
-
-    FindOrCreateFigure("Eigen Calving") ; PlotMeshScalarVariable(CtrlVar,MUA,cEigenCalving) ;
-
-    scale=1 ; FindOrCreateFigure("strain rates F0"); PlotTensor(F0.x/1000,F0.y/1000,F0.exx,F0.exy,F0.eyy,scale) ;  axis equal
-    hold on ; PlotCalvingFronts(CtrlVar,MUA,F0,'r');
-    scale=1 ; FindOrCreateFigure("strain rates F1"); PlotTensor(F1.x/1000,F1.y/1000,F1.exx,F1.exy,F1.eyy,scale) ;  axis equal
-    hold on ; PlotCalvingFronts(CtrlVar,MUA,F0,'r');
-
+%     FindOrCreateFigure("P1") ; PlotMeshScalarVariable(CtrlVar,MUA,PSR(:,1)) ;
+%     CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=0;
+%     hold on ; PlotMuaMesh(CtrlVar,MUA,[],'w') ;
+%     hold on ; PlotCalvingFronts(CtrlVar,MUA,F0,'r');
+% 
+%     FindOrCreateFigure("P2") ; PlotMeshScalarVariable(CtrlVar,MUA,PSR(:,2)) ;
+%     hold on ; PlotCalvingFronts(CtrlVar,MUA,F0,'r');
+% 
+% 
+% 
+%     FindOrCreateFigure("Eigen Calving") ; PlotMeshScalarVariable(CtrlVar,MUA,cEigenCalving) ;
+% 
+%     scale=1 ; FindOrCreateFigure("strain rates F0"); PlotTensor(F0.x/1000,F0.y/1000,F0.exx,F0.exy,F0.eyy,scale) ;  axis equal
+%     hold on ; PlotCalvingFronts(CtrlVar,MUA,F0,'r');
+%     scale=1 ; FindOrCreateFigure("strain rates F1"); PlotTensor(F1.x/1000,F1.y/1000,F1.exx,F1.exy,F1.eyy,scale) ;  axis equal
+%     hold on ; PlotCalvingFronts(CtrlVar,MUA,F0,'r');
 end
 
 %%

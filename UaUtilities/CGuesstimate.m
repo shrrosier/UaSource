@@ -32,7 +32,7 @@ BasalSpeedMax=3000 ;
 CGuessMax=mean(BasalSpeedMax./(DrivingStressMin.^F.m));
 
 % Calc surface gradient
-[dsdx,dsdy]=calcFEderivativesMUA(F.s,MUA,CtrlVar);
+[dsdx,dsdy]=calcFEderivativesMUA(F.s,MUA);
 [dsdx,dsdy]=ProjectFintOntoNodes(MUA,dsdx,dsdy);
 
 

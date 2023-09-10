@@ -98,19 +98,19 @@ if nargout>4 || DoPlots
     D=abs(D-D') ;
     
     Cov=F(D) ;
-    R=sqrtm(Cov);
-    Realisation=R*randn(numel(x),1) ;
-    
-    if DoPlots
-        figure;
-        for I=1:3
-            y=R*randn(numel(x),1) ;
-            plot(x/1000,y) ; ylabel('Matern realisation') ; xlabel('distance (km)')
-            hold on
-            fprintf(' Expected variance %f  \t  estimated variance %f \n ',sigma2,var(y))
-        end
-        title(sprintf(' A few examples of Matern realisations with rho=%i and sigma=%i',rho,sigma2))
-    end
+%     R=sqrtm(Cov);
+%     Realisation=R*randn(numel(x),1) ;
+%     
+%     if DoPlots
+%         figure;
+%         for I=1:3
+%             y=R*randn(numel(x),1) ;
+%             plot(x/1000,y) ; ylabel('Matern realisation') ; xlabel('distance (km)')
+%             hold on
+%             fprintf(' Expected variance %f  \t  estimated variance %f \n ',sigma2,var(y))
+%         end
+%         title(sprintf(' A few examples of Matern realisations with rho=%i and sigma=%i',rho,sigma2))
+%     end
     
 end
 
