@@ -6,46 +6,54 @@ if isempty(F.LSF) ; return ; end
 
 
 
+if CtrlVar.LevelSetMethodAutomaticallyDeactivateElements
 
-% Mask=CalcMeshMask(CtrlVar,MUA,F.LSF,0);
-%      CtrlVar.LevelSetMethodAutomaticallyDeactivateElementsThreshold=CtrlVar.LevelSetMethodStripWidth/2 ;
-%      Inode=F.LSF<CtrlVar.LevelSetMethodAutomaticallyDeactivateElementsThreshold ;
-%      Iele=MuaElementsContainingGivenNodes(CtrlVar,MUA,find(Inode),Mask.ElementsOut,"all") ;
-%      ElementsToBeDeactivated=ElementsToBeDeactivated | Iele ;
+    if CtrlVar.LevelSetEvolution=="-Prescribed-"
 
+        % get rid of ALL elements downstream of the calving fronts
 
 
-if CtrlVar.LevelSetMethodSolveOnAStrip
+        fprintf("LevelSetElementDeactivation:  deactivating ALL elements downstream of calving fronts. ")
+        isIceNode = F.LSF >= 0 ;              % All icy nodes
+        isIceElement=AllElementsContainingGivenNodes(MUA.connectivity,isIceNode) ;  % all elements containing at least one icy node
+        ElementsToBeDeactivated=~isIceElement ;
+
+    else
 
 
+        CtrlVar.LineUpGLs=false ;
 
-    CtrlVar.LineUpGLs=false ; Threshold=0 ;
+        if isnan(CtrlVar.LevelSetMethodStripWidth)
 
-    [xc,yc]=CalcMuaFieldsContourLine(CtrlVar,MUA,F.LSF,Threshold);
-    DistNod=pdist2([xc(:) yc(:)],[F.x F.y],'euclidean','Smallest',1) ;
+            fprintf("LevelSetElementDeactivation: The variable CtrlVar.LevelSetMethodStripWidth is not defined.\n")
+            fprintf("LevelSetElementDeactivation: Elements will not be deactivated based on the value of the level set.\n")
+            warning("LevelSetEquation:ParameterNotDefined","The variable CtrlVar.LevelSetMethodStripWidth needs to be defined.")
 
-    DistNod=DistNod(:) ;
-    DistEle=Nodes2EleMean(MUA.connectivity,DistNod) ;  % note, this is now an element-valued distance function
-    LSFEle=Nodes2EleMean(MUA.connectivity,F.LSF) ;
+        else
 
-    if isnan(CtrlVar.LevelSetMethodStripWidth)
+            fprintf("LevelSetElementDeactivation:  deactivating ALL elements downstream of calving fronts. ")
 
-        fprintf("The variable CtrlVar.LevelSetMethodStripWidth needs to be defined.\n")
-        error("LevelSetEquation:ParameterNotDefined","The variable CtrlVar.LevelSetMethodStripWidth needs to be defined.")
+
+            % I only deactivate elements if:
+            % 1) all nodes are have LSF value below threhold
+            % 2) all nodes have a negative LSF value
+
+            %
+
+            [xc,yc]=CalcMuaFieldsContourLine(CtrlVar,MUA,F.LSF,0);
+            DistNod=pdist2([xc(:) yc(:)],[F.x F.y],'euclidean','Smallest',1) ;
+
+            DistNod=DistNod(:) ;
+
+            isIcyNode = DistNod < CtrlVar.LevelSetMethodStripWidth  | F.LSF > 0 ;
+            isIceElement=AllElementsContainingGivenNodes(MUA.connectivity,isIcyNode) ;
+            ElementsToBeDeactivated=~isIceElement ;
+
+
+        end
 
     end
-
-
-    %     NegLSFNode=F.LSF < 0;
-    %     OutsideStripNodes=DistNode<CtrlVar.LevelSetMethodStripWidth ;
-    %     Inode=NegLSFNode & OutsideStripNodes ;
-    %     Iele=MuaElementsContainingGivenNodes(CtrlVar,MUA,Inode,[],"all") ;
-
-    ElementsToBeDeactivated=DistEle>CtrlVar.LevelSetMethodStripWidth & LSFEle < 0 ; % distance downstream of calving front
-
-
 end
 
-
-% figure ; UaPlots(CtrlVar,MUA,F,F.h) ; hold on ;  PlotMuaMesh(CtrlVar,MUA) ; hold on ; PlotMuaMesh(CtrlVar,MUA,ElementsToBeDeactivated,"r") ;
+% UaPlots(CtrlVar,MUA,F,F.h) ; hold on ;  PlotMuaMesh(CtrlVar,MUA) ; hold on ; PlotMuaMesh(CtrlVar,MUA,ElementsToBeDeactivated,"r") ;
 

@@ -1,8 +1,8 @@
-%% Generating FE meshes from with Úa
+%% Generating FE meshes from with Ua
 %
 % Several examples of how to define meshes
 %
-% Note that when using Úa, the call to genmesh2d is not needed as this call is done from within Úa
+% Note that when using Ua, the call to genmesh2d is not needed as this call is done from within Ua
 % Also the call CtrlVar=Ua2D_DefaultParameters() is not needed either.
 %
 % To run individual examples you can use the matlab option of running code sections from within editor. 
@@ -11,31 +11,118 @@
 %
 %% Example: A simple polygon 
 % mesh boundary coordinates should go clockwise around the domain
-% (although if this is done incorrectly, Úa will automatically correct for this anyhow.)
+% (although if this is done incorrectly, Ua will automatically correct for this anyhow.)
 %
 UserVar=[];
 CtrlVar=Ua2D_DefaultParameters(); %
+CtrlVar.PlotXYscale=1; 
  CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
-% Note; When creating this mesh using Úa, only the following 
+% Note; When creating this mesh using Ua, only the following 
 % three lines are required in the Ua2D_InitialUserInput.m
-CtrlVar.MeshSizeMax=0.1; 
-CtrlVar.MeshSizeMin=0.1;
-CtrlVar.MeshSize=0.1;
+CtrlVar.MeshSizeMax=1; 
+CtrlVar.MeshSizeMin=0.01;
+CtrlVar.MeshSize=0.025;
 
 MeshBoundaryCoordinates=[-1 -1 ; -1 0 ; 0 1 ; 1 0 ; 1 -1 ; 0 0];
 
 CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
-% Now generate mesh (When using Úa this is done internally, no such call
+% Now generate mesh (When using Ua this is done internally, no such call
 % then needed).
 
 
 [UserVar,MUA]=genmesh2d(UserVar,CtrlVar);
-figure ; PlotMuaMesh(CtrlVar,MUA); drawnow
+FindOrCreateFigure("Mesh") ; PlotMuaMesh(CtrlVar,MUA); drawnow
+
+
+FindOrCreateFigure("ele sizes histogram") ; histogram( sqrt(2*MUA.EleAreas)) ; xlabel("Element size")
+
+
+
+%% Examples of local mesh refinement
+% create initial mesh
+UserVar=[];
+CtrlVar=Ua2D_DefaultParameters(); %
+CtrlVar.PlotXYscale=1; 
+CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
+CtrlVar.MeshSizeMax=1; 
+CtrlVar.MeshSizeMin=0.2;
+CtrlVar.MeshSize=0.025;
+
+MeshBoundaryCoordinates=[-1 -1 ; -1 0 ; 0 1 ; 1 0 ; 1 -1 ; 0 0];
+
+CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
+
+[UserVar,MUA]=genmesh2d(UserVar,CtrlVar);
+FindOrCreateFigure("MUA old") ; PlotMuaMesh(CtrlVar,MUA); drawnow
+
+% Refine all elements using the local newest red-green method
+
+MUAold=MUA;
+
+ElementsToBeCoarsened=false(MUAold.Nele,1);
+ElementsToBeRefined=true(MUAold.Nele,1);
+
+CtrlVar.MeshRefinementMethod='explicit:local:red-green' ;
+CtrlVar.LocalAdaptMeshSmoothingIterations=0;   % Maximum number of smoothing iteration using the 'red-green' local mesh refinement option. 
+                                                % Set to zero to disable mesh-smoothing after red-green refinement operation.
+RunInfo=UaRunInfo; 
+[MUAnew,RunInfo]=LocalMeshRefinement(CtrlVar,RunInfo,MUAold,ElementsToBeRefined,ElementsToBeCoarsened) ; 
+
+
+FindOrCreateFigure("MUAnew: Mesh refined local:red-green") ; PlotMuaMesh(CtrlVar,MUAnew); 
+
+
+
+% Refine all elements using the local newest vertex bisection method
+
+
+MUAold=MUA;
+
+ElementsToBeCoarsened=false(MUAold.Nele,1);
+ElementsToBeRefined=true(MUAold.Nele,1);
+
+CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection' ; 
+[MUAnew,RunInfo]=LocalMeshRefinement(CtrlVar,RunInfo,MUAold,ElementsToBeRefined,ElementsToBeCoarsened) ; 
+
+
+FindOrCreateFigure("MUAnew: Mesh refined local:newest vertex bisection") ; PlotMuaMesh(CtrlVar,MUAnew); 
+
+% Refine about half of the elements 
+
+
+MUAold=MUA;
+ElementsToBeCoarsened=false(MUAold.Nele,1);
+ElementsToBeRefined=MUA.xEle< 0 ; 
+
+CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection' ; 
+[MUAnew,RunInfo]=LocalMeshRefinement(CtrlVar,RunInfo,MUAold,ElementsToBeRefined,ElementsToBeCoarsened) ; 
+
+
+FindOrCreateFigure("MUAnew: Part of mesh refined local:newest vertex bisection") ; PlotMuaMesh(CtrlVar,MUAnew); 
+
+% And now unrefine again.  Unrefinement can only be done using newest vertex bisection and for those elements that previously where refined
+
+
+
+MUAold=MUA;
+Variable=zeros(MUAold.Nnodes,1);
+
+ElementsToBeCoarsened=true(MUAold.Nele,1);
+ElementsToBeRefined=false(MUAold.Nele,1);
+
+CtrlVar.MeshRefinementMethod='explicit:local:newest vertex bisection' ; 
+[MUAnew,RunInfo]=LocalMeshRefinement(CtrlVar,RunInfo,MUAold,ElementsToBeRefined,ElementsToBeCoarsened) ; 
+
+
+FindOrCreateFigure("MUAnew: Mesh unrefined local:newest vertex bisection") ; PlotMuaMesh(CtrlVar,MUAnew); 
+
+
+
 %str=input('Next example? y/n [y] ? ','s');  if strcmpi(str,'n') ; return ; end
 %% Example: periodic boundary conditions
 CtrlVar=Ua2D_DefaultParameters();
 CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
-% When using Úa only the following lines are needed in the input file
+% When using ï¿½a only the following lines are needed in the input file
 % Ua2D_InitialUserInput.m
 L=5e3 ; H=1e3;
 CtrlVar.MeshSizeMax=H/5;
@@ -57,8 +144,8 @@ CtrlVar.GmshGeoFileAdditionalInputLines{4}='Physical Line(4) = {4};';
 CtrlVar.GmshGeoFileAdditionalInputLines{5}='Physical Surface(1) = {1};';  
 CtrlVar.GmshGeoFileAdditionalInputLines{6}='Periodic Line {1,2} = {3,4};';
 % Now everything needed for mesh generation has been defined. If we are running
-% Úa this is all we need to do. But to see the resulting mesh we now
-% generate the mesh in the exact same way as Úa would do, i.e. through a call to
+% ï¿½a this is all we need to do. But to see the resulting mesh we now
+% generate the mesh in the exact same way as ï¿½a would do, i.e. through a call to
 % 'genmesh2d'.
 UserVar=[];
 CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
@@ -196,6 +283,7 @@ figure ; PlotMuaMesh(CtrlVar,MUA); drawnow
 %str=input('Next example? y/n [y] ? ','s'); if strcmpi(str,'n') ; return ; end
 %% Example: Mesh with several holes and islands
 CtrlVar=Ua2D_DefaultParameters(); 
+CtrlVar.PlotXYscale=1; 
 CtrlVar.MeshGenerator='gmsh';  
 % CtrlVar.MeshGenerator='mesh2d';  
 CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
@@ -216,7 +304,9 @@ CtrlVar.GmshMeshingAlgorithm=8;    % see gmsh manual
 
 UserVar=[];
 [UserVar,MUA]=genmesh2d(UserVar,CtrlVar); 
-figure ; PlotMuaMesh(CtrlVar,MUA); 
+figex=FindOrCreateFigure("meshing example") ; clf(figex) ;
+CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=true;
+PlotMuaMesh(CtrlVar,MUA); 
 hold on
 % also calculate and plot normals
 [nx,ny,xn,yn,Nx,Ny] = CalcEdgeAndNodalNormals(MUA.connectivity,MUA.coordinates,MUA.Boundary.Edges);
@@ -384,13 +474,15 @@ figure ; PlotMuaMesh(CtrlVar,MUA); drawnow
 %   This method only works with mesh2d 
 
 CtrlVar=Ua2D_DefaultParameters();
-CtrlVar.MeshGenerator='gmsh';  
 CtrlVar.MeshGenerator='mesh2d';  
 
 CtrlVar.PlotXYscale=1;
 CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
 
-CtrlVar.MeshSizeMax=0.1; CtrlVar.MeshSizeMin=0.1;  CtrlVar.MeshSize=0.1;
+CtrlVar.MeshSizeMax=1; 
+CtrlVar.MeshSizeMin=0.025;  
+CtrlVar.MeshSize=0.01;
+
 CtrlVar.GmshInputFormat=1;
 UserVar=[];
 Boundary=[0.00 0.00 ; 0.25 0.10  ;  0.25 1.00 ; 1.00 1.00 ; 1.00  0.00  ; ....     % first loop
@@ -402,8 +494,10 @@ CtrlVar.MeshBoundaryCoordinates=Boundary ;
 
 
 [UserVar,MUA]=genmesh2d(UserVar,CtrlVar); 
-figure ; PlotMuaMesh(CtrlVar,MUA); drawnow
+FindOrCreateFigure("mesh") ; PlotMuaMesh(CtrlVar,MUA); drawnow
 
+
+FindOrCreateFigure("ele sizes histogram") ; histogram( sqrt(2*MUA.EleAreas)) ; xlabel("Element size")
 %str=input('Next example? y/n [y] ? ','s');  if strcmpi(str,'n') ; return ; end
 %% Example: Two subdomains sharing a common boundary.
 %
@@ -513,7 +607,35 @@ figure ; PlotMuaMesh(CtrlVar,MUA); drawnow
 
 %str=input('Next example? y/n [y] ? ','s');  if strcmpi(str,'n') ; return ; end
 
-%% Example: Meshing the Brunt Ice Shelf
+
+%% Example: Meshing the Brunt Ice Shelf using mesh2d
+%
+
+load BruntMeshBoundaryCoordinates.mat
+UserVar=[];
+
+CtrlVar=Ua2D_DefaultParameters(); 
+CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
+
+CtrlVar.MeshGenerator='mesh2d';  
+CtrlVar.MeshSizeMax=20e3; 
+CtrlVar.MeshSize=5e3; 
+CtrlVar.MeshSizeMin=1e3; 
+CtrlVar.TriNodes=3;
+
+CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
+
+[UserVar,MUA]=genmesh2d(UserVar,CtrlVar); 
+FindOrCreateFigure("Brunt mesh with mesh2d") ; 
+PlotMuaMesh(CtrlVar,MUA); drawnow
+
+
+FindOrCreateFigure("ele sizes histogram mesh2d") ; histogram( sqrt(2*MUA.EleAreas)) ; xlabel("Element size")
+
+%str=input('Next example? y/n [y] ? ','s');  if strcmpi(str,'n') ; return ; end
+
+
+%% Example: Meshing the Brunt Ice Shelf using gmsh
 %
 
 load BruntMeshBoundaryCoordinates.mat
@@ -528,9 +650,10 @@ CtrlVar=Ua2D_DefaultParameters();
 CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo=1;
 
 
-CtrlVar.MeshGenerator='gmsh';  
+CtrlVar.MeshGenerator='gmsh';   
 CtrlVar.GmshInputFormat=2;
 CtrlVar.MeshSizeMax=5e3; 
+CtrlVar.MeshSize=5e3; 
 CtrlVar.MeshSizeMin=1e3; 
 CtrlVar.TriNodes=3;
 
@@ -543,7 +666,10 @@ CtrlVar.Gmsh.Lines{1}=[(1:i1b-i1a+1)';1];
 CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
 
 [UserVar,MUA]=genmesh2d(UserVar,CtrlVar); 
-figure ; PlotMuaMesh(CtrlVar,MUA); drawnow
+FindOrCreateFigure("Brunt mesh with gmsh") ; 
+PlotMuaMesh(CtrlVar,MUA); drawnow
+
+FindOrCreateFigure("ele sizes histogram gmsh") ; histogram( sqrt(2*MUA.EleAreas)) ; xlabel("Element size")
 
 %str=input('Next example? y/n [y] ? ','s');  if strcmpi(str,'n') ; return ; end
 %%
@@ -729,10 +855,10 @@ CtrlVar.MeshBoundaryCoordinates=MeshBoundaryCoordinates;
 
 x=MUA.coordinates(:,1) ; y=MUA.coordinates(:,2);
 MUA.coordinates(:,1)=y ; MUA.coordinates(:,2)=x;
-figure ; PlotMuaMesh(CtrlVar,MUA,'k') ; axis ij off ; title(' ')
+FindOrCreateFigure("UA Logo") ; PlotMuaMesh(CtrlVar,MUA,'k') ; axis ij off ; title(' ')
 
 
-
+FindOrCreateFigure("ele sizes histogram") ; histogram( sqrt(2*MUA.EleAreas)) ; xlabel("Element size")
 
 
 

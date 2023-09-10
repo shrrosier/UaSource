@@ -1,11 +1,10 @@
 
 function PrintRunInfo(CtrlVar)
 
+
 fprintf(CtrlVar.fidlog,'\n \n');
-
-fprintf(CtrlVar.fidlog,' **************************     Úa version: 10  July, 2022  (beta) ********************** \n');
-
-fprintf(CtrlVar.fidlog,'    Run starts at %s  \n ',datestr(now));
+fprintf(CtrlVar.fidlog,' **************************    Úa version: 28 August 2023 (beta)      ********************** \n');
+fprintf(CtrlVar.fidlog,'    Run starts at %s  \n ',datetime);
 fprintf(CtrlVar.fidlog,'   Experiment: %s  \n ',CtrlVar.Experiment);
 
 if CtrlVar.doInverseStep

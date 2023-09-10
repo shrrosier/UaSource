@@ -34,14 +34,12 @@ classdef (ConstructOnLoad) UaRunInfo
             obj.Inverse.fmincon=struct;
             obj.Inverse.fminunc=struct;
 
+            N=1000; % initial memory allocation
             obj.Forward.uvConverged=false;
-            obj.Forward.uvIterations=NaN;
-            obj.Forward.uvResidual=NaN;
+            obj.Forward.uvIterations=NaN(N,1);
+            obj.Forward.uvResidual=NaN(N,1);
+            obj.Forward.uvBackTrackSteps=NaN(N,1);
 
-
-
-
-            obj.Forward.Converged=0;
 
 
             obj.Forward.dtRestart=NaN;
@@ -50,6 +48,7 @@ classdef (ConstructOnLoad) UaRunInfo
             N=1000; % initial memory allocation
             obj.Forward.time=zeros(N,1)+NaN;
             obj.Forward.dt=zeros(N,1)+NaN;
+            obj.Forward.uvhConverged=false;
             obj.Forward.uvhIterations=zeros(N,1)+NaN;
             obj.Forward.uvhResidual=zeros(N,1)+NaN;
             obj.Forward.uvhBackTrackSteps=zeros(N,1)+NaN;
@@ -57,11 +56,12 @@ classdef (ConstructOnLoad) UaRunInfo
             obj.Forward.uvhActiveSetCyclical=zeros(N,1)+NaN;
             obj.Forward.uvhActiveSetConstraints=zeros(N,1)+NaN;
 
+            obj.Forward.hConverged=0;
             obj.Forward.hIterations=NaN(N,1);
             obj.Forward.hResidual=NaN(N,1);
             obj.Forward.hBackTrackSteps=zeros(N,1)+NaN;
             obj.Forward.hiCount=0;
-            obj.Forward.hConverged=0;
+            
 
             obj.Forward.ubvbRecalculatedOnNewMesh=false;
 

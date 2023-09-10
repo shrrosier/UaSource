@@ -16,6 +16,12 @@ function  [x,y]=solveKApeSymmetric(A,B,f,g,x0,y0,CtrlVar)
 
 [nA,mA]=size(A) ; [nB,mB]=size(B) ; [nf,mf]=size(f) ; [ng,mb]=size(g) ;  
 %[nx0,mx0]=size(x0) ; 
+
+if isempty(y0)
+  y0=zeros(nB,1); % This is a special case, allowing for the initial estimate for y to be empty
+                  % in which case the initial estimate is set to zero.
+end
+
 [ny0,my0]=size(y0);
 
 if nA~=mA
@@ -43,10 +49,17 @@ end
 %     error('error in solveKApeSymmetric')
 % end
 
+
+
 if ny0~=nB
     fprintf('y0 must have same number of elements as there are rows in B\n')
     save TestSave ; error('error in solveKApeSymmetric')
 end
+
+if ~isfield(CtrlVar,"Symmsolver")
+   CtrlVar.SymmSolver='auto' ;
+end
+
 
 if isequal(lower(CtrlVar.SymmSolver),'auto')
     
@@ -92,12 +105,15 @@ switch CtrlVar.SymmSolver
 end
 
 
-tSolve=toc(tSolve); 
+tSolve=toc(tSolve);
 
-if CtrlVar.InfoLevelLinSolve>=10
-    fprintf('solveKApeSymmetric: # unknowns=%-i \t # variables=%-i \t # Lagrange mult=%-i \t time=%-g \t method=%s \n ',...
-        nA+nB,nA,nB,tSolve,CtrlVar.SymmSolver)
+if isfield(CtrlVar,"InfoLevelLinSolve")
+    if CtrlVar.InfoLevelLinSolve>=10
+        fprintf('solveKApeSymmetric: # unknowns=%-i \t # variables=%-i \t # Lagrange mult=%-i \t time=%-g \t method=%s \n ',...
+            nA+nB,nA,nB,tSolve,CtrlVar.SymmSolver)
+    end
 end
+
 
 return
 

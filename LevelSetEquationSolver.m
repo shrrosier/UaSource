@@ -2,6 +2,12 @@ function [UserVar,RunInfo,LSF,l,LSFqx,LSFqy]=LevelSetEquationSolver(UserVar,RunI
 %%
 %
 %
+% 
+% 
+% $$\partial_t f +  \mathbf{v} \cdot \nabla f  - \nabla \cdot (\kappa \nabla f) = c \, \|(\nabla f)\|$$
+% 
+%
+%
 %    df/dt + u df/dx + v df/dy - div (kappa grad f) = c norm(grad f0)
 %
 %    df/dt + (u-cx) df/dx + (v-cy) df/dy - div (kappa grad f) = 0
@@ -58,8 +64,7 @@ end
 
 
 CtrlVar.LevelSetTheta=0.5;
-[rP,rL,rTP,rTL,rPTL]=CalcLSFconstfunctionTLPterms(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1,l,F1.LSF);
-
+% [rP,rL,rTP,rTL,rPTL]=CalcLSFconstfunctionTLPterms(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1,l,F1.LSF);
 % if rP/rL> 1e-3
 %     fprintf("LevelSetEquationSolver:Automated re-initialisation. \n")
 %     
@@ -134,7 +139,7 @@ if contains(CtrlVar.LevelSetPhase,"Propagation")
         
         
         [UserVar,RunInfo,LSF,l,LSFqx,LSFqy]=LevelSetEquationNewtonRaphson(UserVar,RunInfo,CtrlVar,MUA,BCs,F0,F1,l);
-        
+          
         if RunInfo.LevelSet.SolverConverged
             
             % OK, it converged, advance solution, update time

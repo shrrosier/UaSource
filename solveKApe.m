@@ -40,7 +40,7 @@ if ~isempty(B)
     
     if ny0~=nB
         fprintf('y0 must have same number of elements as there are rows in B\n')
-        error('error in solveKApe')
+        error('solveKApe:InputsIncompatable','error in solveKApe')
     end
 end
 
@@ -54,16 +54,34 @@ n=size(A,1) ; m=size(B,1);
 %     CtrlVar.AsymmSolver='EliminateBCsSolveSystemDirectly';
 % end
 
+if isempty(CtrlVar) || ~isstruct(CtrlVar)
+
+    CtrlVar.AsymmSolver='auto';
+    CtrlVar.InfoLevelLinSolve=0 ;
+    CtrlVar.TestForRealValues=0;
+
+else
+    if ~isfield(CtrlVar,"AsymmSolver")
+        CtrlVar.AsymmSolver='auto';
+    end
+
+    if ~isfield(CtrlVar,"InfoLevelLinSolve")
+        CtrlVar.InfoLevelLinSolve=0 ;
+    end
+
+    CtrlVar.TestForRealValues=0;
+end
+
 if isequal(lower(CtrlVar.AsymmSolver),'auto')
-    
+
     if isempty(B) || numel(B)==0
         CtrlVar.AsymmSolver='Bempty';
-     elseif isdiag(B*B')
-         CtrlVar.AsymmSolver='EliminateBCsSolveSystemDirectly';
+    elseif isdiag(B*B')
+        CtrlVar.AsymmSolver='EliminateBCsSolveSystemDirectly';
     else
         CtrlVar.AsymmSolver='AugmentedLagrangian';
     end
-    
+
 end
 
 
@@ -106,6 +124,8 @@ switch CtrlVar.AsymmSolver
         xx0(iConstrainedDOF)=[];
         
         tstart=tic;
+
+
         tluinc=tic;
         %setup.type = 'crout'; setup.milu = 'off'; setup.droptol = 0.1;
         %setup.type = 'ilutp'; setup.milu = 'off'; setup.droptol = 0.15;
@@ -115,8 +135,10 @@ switch CtrlVar.AsymmSolver
         tluinc=toc(tluinc);
         
         
-        tol=1e-6 ; maxit=10;
+        tol=1e-6 ; maxit=20;
         
+
+
         t1=tic ;
         %[sol,flag,relres,iter,resvec]=bicgstabl(AA,ff,tol,maxit,L1,U1,xx0);
         restart=10;
