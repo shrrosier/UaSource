@@ -55,7 +55,6 @@ else
     
 end
 
-PrintInfoAboutElementsSizes(CtrlVar,MUA); 
 
 if ~isempty(CtrlVar.SaveInitialMeshFileName)
     save(CtrlVar.SaveInitialMeshFileName,'MUA') ;

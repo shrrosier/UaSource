@@ -655,11 +655,6 @@ if CtrlVar.InfoLevelBackTrack>=100 && CtrlVar.doplots==1
     fig=FindOrCreateFigure(FigName) ;  clf(fig) ;
     plot(Infovector(:,1),Infovector(:,2),'or-') ;
 
-    xlabel('$\gamma$',Interpreter='latex') ;
-    ylabel('Cost',Interpreter='latex') ;
-    
-    hold on
-    plot(gamma,fgamma,'o',MarkerFaceColor="b",MarkerSize=10)
     
      % add Infovector the the TestVector values
 
@@ -683,16 +678,9 @@ if CtrlVar.InfoLevelBackTrack>=100 && CtrlVar.doplots==1
     end
 
 
-    plot(xStart,fStart,"o",MarkerFaceColor="r",MarkerSize=5); 
-
-    legend("backtracking curve values","estimated minimum","cost curve","estimated slope at origin","starting point",Location="best",interpreter="latex")
 
 
-    title(ItText+sprintf('backtracking/extrapolation steps %-i/%-i',iarm,Extrapolation),Interpreter="latex")
 
-    if isfield(CtrlVar,"time")
-        subtitle(sprintf("t=%f   dt=%f",CtrlVar.time,CtrlVar.dt),Interpreter="latex")
-    end
 
     drawnow
     %          prompt = 'Do you want more? Y/N [Y]: ';

@@ -172,15 +172,7 @@ end
 if CtrlVar.LevelSetMethodSolveOnAStrip
 
 
-    if CtrlVar.LevelSetInfoLevel>=10 && CtrlVar.doplots
 
-
-        Flsf=FindOrCreateFigure("LSF on strip ") ; clf(Flsf) ;
-        PlotMeshScalarVariable(CtrlVar,MUA,LSF/1000) ;
-        hold on ; PlotCalvingFronts(CtrlVar,MUA,LSF,"r",LineWidth=2 ) ;
-        title("$\varphi$"+sprintf(" at t=%2.2f",F1.time),Interpreter="latex")
-
-    end
 
 
     LSFcopy(~LSFnodes)=DistNod(~LSFnodes).*sign(LSFcopy(~LSFnodes)) ;  
@@ -190,13 +182,6 @@ if CtrlVar.LevelSetMethodSolveOnAStrip
 
     % LSFcopy(~isnan(ll))=LSF(ll(~isnan(ll)));
 
-
-    if CtrlVar.LevelSetInfoLevel>=10 && CtrlVar.doplots
-        Flsf=FindOrCreateFigure("LSF on original mesh ") ; clf(Flsf) ;
-        PlotMeshScalarVariable(CtrlVar,MUAonInput,LSFcopy/1000) ;
-        hold on ; PlotCalvingFronts(CtrlVar,MUAonInput,LSFcopy,"r",LineWidth=2 ) ;
-        title("$\varphi$"+sprintf(" at t=%2.2f",F1.time),Interpreter="latex")
-    end
 
     LSF=LSFcopy;
 

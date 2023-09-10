@@ -79,7 +79,6 @@ if ~isreal(xmin) || InfoLevel>10000
     plot([0 x1],[y0 y0+Slope*x1],'g') ;
     x=linspace(0,2*x2) ;
     y=a0+a1*x+a2*x.^2+a3*x.^3 ;
-    plot(x,y,LineWidth=2,LineStyle="--")
     y=A0+A1*x+A2*x.^2 ;
     plot(x,y)
 

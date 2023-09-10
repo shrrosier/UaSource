@@ -1,12 +1,8 @@
 function [Emin,Emax,Emean,Emedian]=PrintInfoAboutElementsSizes(CtrlVar,MUA,options)
 
 
-arguments
-    CtrlVar struct
-    MUA     struct
-    options.print logical = true ;
+    options.print  = true ;
 
-end
 
 
 Tarea=TriAreaFE(MUA.coordinates,MUA.connectivity);

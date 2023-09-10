@@ -12,15 +12,19 @@ switch lower(CtrlVar.LevelSetInitialisationMethod)
 
     case {"-geometric-","geometric","-geo-","geo"}
 
-        Value=0 ;  [Xc,Yc]=CalcMuaFieldsContourLine(CtrlVar,MUA,F0.LSF,Value,subdivide=true) ;
-        isPlot=false;
+        options.subdivide = true;
+    options.lineup  = true;
+    options.plot  = false;
+        Value=0 ;  [Xc,Yc]=CalcMuaFieldsContourLine(CtrlVar,MUA,F0.LSF,Value,options) ;
         CFPD=sqrt(2*min(MUA.EleAreas))/CtrlVar.LevelSetGeometricInitialisationDistanceFactor;
-        [~,~,LSF]=...
-            CalvingFrontLevelSetGeometricalInitialisation(CtrlVar,MUA,Xc,Yc,F0.LSF,...
-            method="InputPoints",...
-            ResampleCalvingFront=true,...
-            CalvingFrontPointDistance=CFPD,...
-            plot=isPlot) ;
+        options.method="InputPoints";
+        options.ResampleCalvingFront=true;
+        options.CalvingFrontPointDistance=CFPD;
+        options.GetRidOfCalvingFrontOutsideComputationalDomain = false;
+        options.CalvingFrontPointDistance = 1e3; % this is the (default) distance between the points defining the calving front
+        [~,~,LSF]=CalvingFrontLevelSetGeometricalInitialisation(CtrlVar,MUA,Xc,Yc,F0.LSF,options);
+
+
         %%
 
     otherwise

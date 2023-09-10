@@ -18,19 +18,11 @@ function [xc,yc]=CalcMuaFieldsContourLine(CtrlVar,MUA,Field,Value,options)
 %
 %%
 
-
-
-arguments
-    CtrlVar struct
-    MUA     struct
-    Field   (:,1) double
-    Value   (:,1) double = 0
-    options.lineup logical = true
-    options.plot logical = false
-    options.subdivide logical = false
-
+if nargin<5
+    options.subdivide  = false;
+    options.lineup  = true;
+    options.plot  = false;
 end
-
 
 
 if isempty(Field)  || numel(Field)~=MUA.Nnodes

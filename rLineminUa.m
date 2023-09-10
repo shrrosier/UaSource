@@ -482,23 +482,6 @@ if contains(CtrlVar.rLineMinUa,"-Cauchy M to Newton-")
         xVector=[xVector;0;1]; fVector=[fVector;r2MD;r2Newton];
         [~,I]=sort(xVector)  ; xVector=xVector(I) ; fVector=fVector(I) ;
 
-        plot(xVector,fVector,'o-r') ;
-        hold on ;
-        plot(0,r2MD,"*m")
-        plot(1,r2Newton,"*b")
-        text(0,r2MD,"   C",HorizontalAlignment="left")
-        text(1,r2Newton,"N   ",HorizontalAlignment="right")
-        yline(r0,"--k","$r_0$",interpreter="latex",LabelHorizontalAlignment="center")
-        yline(rminNewton,"-.k","$\min r_N$",interpreter="latex",LabelHorizontalAlignment="right")
-        yline(r2MD,"-.k","$\min r_C$",interpreter="latex",LabelHorizontalAlignment="left")
-        plot(gammaminCN,rCN,'o',MarkerFaceColor="b",MarkerSize=10)
-        xlabel("Distance along the Cauchy-to-Newton path",interpreter="latex")
-        ylabel("$r^2$",interpreter="latex")
-        legend("$r^2$","$r^2_C$","$r^2_N$","$r^2_0$","$\min r^2_N$","$\min r^2_{CM}$",interpreter="latex",location="best")
-        title("From the Cauchy-Point to the Newton-Point")
-        subtitle(sprintf("t=%f   dt=%f",CtrlVar.time,CtrlVar.dt),Interpreter="latex")
-        % fig=gcf ; exportgraphics(fig,"ExampleCaucyToNewtonPath.pdf")
-        drawnow
     end
 
 
@@ -550,7 +533,6 @@ if contains(CtrlVar.rLineMinUa,"-Plot Quad Approximations-")
     hold on
     plot(gVector,rVector,"o-b")
     plot(gVector,QVector,"*-r")
-    plot(gammaminNewton,rminNewton,'o',MarkerFaceColor="b",MarkerSize=10)
 
     legend("r^2","Quad approximation in Newton direction")
 
@@ -590,7 +572,6 @@ if contains(CtrlVar.rLineMinUa,"-Plot Quad Approximations-")
     plot(gVector,rVector,"o-b")
     plot(gVector,QVector,"*-r")
     legend("r^2","Quad approximation in steepest Descent direction")
-    plot(gammaminCauchyD,rminCauchyD,'o',MarkerFaceColor="b",MarkerSize=10)
 
   %% Quad approximation in the direction of M-modified steepest Descent
     % setting direction the be the that of M-modified steepest Descent
@@ -627,8 +608,6 @@ if contains(CtrlVar.rLineMinUa,"-Plot Quad Approximations-")
     plot(gVector,rVector,"o-b")
     plot(gVector,QVector,"*-r")
     
-    plot(gammaminCauchyM,rminCauchyM,'o',MarkerFaceColor="b",MarkerSize=10)
-    plot(gammaCauchyM,rCauchyM,'o',MarkerFaceColor="r",MarkerSize=5)
     legend("r^2","Quad approximation in M-modified steepest Descent direction","Estimated min","Initial Guess (MCauchy Point)")
 
     %% Plot r2 along Cauchy to Newton direction
@@ -680,20 +659,6 @@ if contains(CtrlVar.rLineMinUa,"-Plot Quad Approximations-")
     xVector=[xVector(:);gVector(:)] ; fVector=[fVector(:);r2(:)] ; 
     [~,I]=sort(xVector)  ; xVector=xVector(I) ; fVector=fVector(I) ; 
 
-    plot(xVector,fVector,'o-r') ; 
-    hold on ; 
-    plot(0,r2MD,"*m")
-    plot(1,r2Newton,"*b")
-    text(0,r2MD,"   C(M)",HorizontalAlignment="left")
-    text(1,r2Newton,"N   ",HorizontalAlignment="right")
-    yline(r0,"--k","$r_0$",interpreter="latex")
-    yline(rminNewton,"-.k","$r_N$",interpreter="latex")
-    plot(gammaminCN,rCN,'o',MarkerFaceColor="b",MarkerSize=10)
-    xlabel("Distance along the Cauchy-to-Newton path",interpreter="latex")
-    ylabel("$r^2$",interpreter="latex")
-    legend("$r^2$","$r^2_C$","$r^2_N$","$r^2_0$","$\min r^2_N$","$\min r^2_{CM}$",interpreter="latex",location="best")
-    % fig=gcf ; exportgraphics(fig,"ExampleCaucyToNewtonPath.pdf")
-    drawnow
 
 
 

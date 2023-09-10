@@ -154,43 +154,6 @@ function [RunInfo,varargout]=MapNodalVariablesFromMesh1ToMesh2UsingScatteredInte
         RunInfo.Mapping.nNotIdenticalNodesInside=numel(NodesInsideAndNotSame);
         
         
-        if CtrlVar.doplots && CtrlVar.doAdaptMeshPlots && CtrlVar.InfoLevelAdaptiveMeshing>=5 
-            fig=FindOrCreateFigure("-Old and new nodes-"); clf(fig) ; 
-           
-            tt=axis;
-            hold off
-            p0=PlotMuaMesh(CtrlVar,MUAnew,[],'b');
-            hold on
-            
-            p1=PlotMuaMesh(CtrlVar,MUAold,[],'k');
-            if ~isequal(tt,[0 1 0 1])
-                axis(tt)
-            end
-            
-            p2=plot(xNew(NodesOutside)/CtrlVar.PlotXYscale,yNew(NodesOutside)/CtrlVar.PlotXYscale,marker="h",color="m");
-            p3=plot(xNew(NodesInsideAndNotSame)/CtrlVar.PlotXYscale,yNew(NodesInsideAndNotSame)/CtrlVar.PlotXYscale,'or');
-            p4=plot(xNew(IdenticalNodes)/CtrlVar.PlotXYscale,yNew(IdenticalNodes)/CtrlVar.PlotXYscale,'*g');
-            
-            if ~isempty(p2) && ~isempty(p3)
-                legend([p0 p1 p2 p3 p4],'New Mesh','Old Mesh','New and outside','New but inside','Identical','Location','northeastoutside')
-            elseif ~isempty(p3)
-                legend([p0 p1 p3 p4],'New Mesh','Old Mesh','New but inside','Identical','Location','northeastoutside')
-            elseif  ~isempty(p2)
-                legend([p0 p1 p2 p4],'New Mesh','Old Mesh','New and outside','Identical','Location','northeastoutside')
-            end
-            
-            
-            axis equal
-            hold off
-            
-            
-            
-            
-            % fprintf('#Outside=%i \t   #Inside and not same=%i \n',numel(NodesOutside),numel(NodesInsideAndNotSame))
-            FigTitle=sprintf('             #Nodes in new mesh=%i \t #Nodes in old mesh=%i \t \n #Same Nodes=%i \t  #~Same Nodes=%i \t #Nodes inside and new=%i \t #Outside nodes=%i ',...
-                nNewNodes,nOldNodes,nIdenticalNodes,nNotIdendicalNodes,numel(NodesInsideAndNotSame),numel(NodesOutside)) ;
-            title(FigTitle)
-        end
         
 
         %% Here for the first time I use scatteredInterpolant. This is only used for nodes that are not identical to those of the old 
