@@ -145,6 +145,7 @@ if contains(CtrlVar.LevelSetPhase,"Propagation")
             % OK, it converged, advance solution, update time
             
             F1.LSF=LSF;                              % updating solution
+            
             CtrlVar.time=CtrlVar.time+CtrlVar.dt ;   % advancing time
             
             if CtrlVar.time >= tEnd

@@ -1,4 +1,4 @@
-function [LSF,xcEdges,ycEdges,ShapeDifference]=CalvingFrontLevelSetGeometricalInitialisation(CtrlVar,MUA,Xc,Yc,LSF,options)
+function [xc,yc,LSF,xcEdges,ycEdges,ShapeDifference]=CalvingFrontLevelSetGeometricalInitialisation(CtrlVar,MUA,Xc,Yc,LSF,options)
 
 %
 % Takes initial calving front data (Xc,Yc) and a level set function LSF, which on input only must have the correct sign, and
@@ -207,6 +207,6 @@ end
 LSF=SignedDistUpdate(UserVar,RunInfo,CtrlVar,MUA,LSF,xcEdges,ycEdges);
 
 CtrlVar.PlotGLs=0;  % to suppress the plot
-
+[xc,yc]=PlotCalvingFronts(CtrlVar,MUA,LSF);
 
 end
