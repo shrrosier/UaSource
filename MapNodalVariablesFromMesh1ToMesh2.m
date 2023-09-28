@@ -16,7 +16,9 @@ switch CtrlVar.MapOldToNew.method
         
     case "FE form functions"
         
-        [RunInfo,varargout{:}]=MapNodalVariablesFromMesh1ToMesh2UsingFEShapeFunctions(CtrlVar,RunInfo,MUAold,MUAnew,varargin{:});
+        x2 = MUAnew.coordinates(:,1);
+        y2 = MUAnew.coordinates(:,2);
+        [varargout{:}]=MapNodalVariablesFromMesh1ToMesh2UsingFEShapeFunctions(CtrlVar,MUAold,x2,y2,varargin{:});
 
     case "ShapeAndScattered"  
 
