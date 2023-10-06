@@ -7,15 +7,9 @@ function [pV,eV1,eV2]=CalcPrincipalValuesOfSymmerticalTwoByTwoMatrices(txx,txy,t
 %
 %%
 
-arguments
+    options.eigenvalues  = true;
+    options.eigenvectors  = false;
 
-    txx      (:,1) double
-    txy      (:,1) double
-    tyy     (:,1) double
-    options.eigenvalues logical = true
-    options.eigenvectors logical = false
-
-end
 
 N=numel(txx);
 pV=zeros(N,2);

@@ -100,7 +100,7 @@ if CtrlVar.WhenPlottingMesh_PlotMeshBoundaryCoordinatesToo
 end
 
 
-[Emin,Emax,Emean,Emedian]=PrintInfoAboutElementsSizes(CtrlVar,MUA,print=false) ;
+[Emin,Emax,Emean,Emedian]=PrintInfoAboutElementsSizes(CtrlVar,MUA,[]) ;
 
 
 title(sprintf("#Ele=%i #Nodes=%i #nod=%i \n (max,mean,median,min)=(%g,%g,%g,%g) ",MUA.Nele,MUA.Nnodes,MUA.nod,Emax,Emean,Emedian,Emin))
