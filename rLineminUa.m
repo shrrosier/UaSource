@@ -203,13 +203,15 @@ if contains(CtrlVar.rLineMinUa,"-Cauchy M-step-")
         %% OK, this is a breakdown as the direction does not lead to a reduction
         %  Try simply to reverse direction...
         CtrlVar.InfoLevelBackTrack=1000;  CtrlVar.InfoLevelNonLinIt=10 ; CtrlVar.doplots=1;
-        if Variables=="-uvl-"
-            funcCauchyM=@(gamma) func(gamma,-DuM,-DvM,-DlM) ;
-            sM=-[DuM;DvM;DlM];
-        else
-            funcCauchyM=@(gamma) func(gamma,-DuM,-DvM,-DhM,-DlM) ;
-            sM=-[DuM;DvM;DhM;DlM];
 
+        if Variables=="-uvl-"
+            DuM=-DuM; DvM=-DvM ; DlM=-DlM ; 
+            funcCauchyM=@(gamma) func(gamma,DuM,DvM,DlM) ;
+            sM=[DuM;DvM;DlM];
+        else
+            DuM=-DuM; DvM=-DvM ; DhM=-DhM ; DlM=-DlM ; 
+            funcCauchyM=@(gamma) func(gamma,DuM,DvM,DhM,DlM) ;
+            sM=[DuM;DvM;DhM;DlM];
         end
         CauchyMSlope0=(-2*R'*H*sM)/Normalisation;
         gammaCauchyM=(R'*H*sM)/((H*sM)'*(H*sM)) ;
@@ -677,16 +679,17 @@ end
 
 %% Summary
 
+
 if CtrlVar.InfoLevelNonLinIt >= 10
     fprintf(" [---------- rLineminUa: \n")
-    fprintf("\t r0=%-13.7g \t r1/r0=%-13.7g \t rNewton/r0=%-13.7g \t rminCauchyM/r0=%-13.7g \t rDescent/r0=%-13.7g \t rCN/r0=%-13.7g \n",r0,r1/r0,rminNewton/r0,rminCauchyM/r0,rminCauchyD/r0,rCN/r0)
+    fprintf("\t r0=%-13.7g \t r1/r0=%-13.7g \t rminNewton/r0=%-13.7g \t rminCauchyM/r0=%-13.7g \t rDescent/r0=%-13.7g \t rCN/r0=%-13.7g \n",r0,r1/r0,rminNewton/r0,rminCauchyM/r0,rminCauchyD/r0,rCN/r0)
     fprintf("\t g0=%-13.8g \t    g1=%-13.7g \t    gNewton=%-13.7g \t             gM=%-13.7g \t    gDescent=%-13.7g \t    gCM=%-13.7g \n",0,1,gammaminNewton,gammaminCauchyM/gammaCauchyM,gammaminCauchyD,gammaminCN)
     fprintf("\t      \t      \t     \t \t               \t normNewton=%-13.7g \t    normCauchyM=%-13.7g \t normCauchyD=%-13.7g \t normCN=%-13.7g \n ",...
         normNewton/normNewtonStep,normCauchyM/normNewtonStep,normCauchyD/normNewtonStep,normCN/normNewtonStep)
     if BestMethod=="Cauchy2Newton"
         fprintf("\t \t \t \t minC2N/rCauchy=%f \t minC2N/minN=%f   \n",rCN/rminCauchyM,rCN/rminNewton)
     end
-    fprintf("\t =================>  Best method is %s  with rmin/r0=%g    <=====================\n",BestMethod,rmin/r0)
+    fprintf("\t =================>  Best method is %s  with rmin/r0=%g  with rmin=%g  <=====================\n",BestMethod,rmin/r0,rmin)
     fprintf(" -------------------------] \n")
 end
 %%
